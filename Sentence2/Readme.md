@@ -23,32 +23,46 @@ Para este punto se opto por hacer los siguientes pasos para resolver el ejercici
 
 3. Se realizó un conteo del tiempo que tarda hacer el procesamiento del archivo TXT:
 
-=== VALIDACIONES COMPLETADAS PANDAS===
+__=== VALIDACIONES COMPLETADAS PANDAS===__
 
 --- Procesando datos ---
    ⏱️ Lectura Excel: 24.77 ms
+   
    ℹ️ Filas filtradas por Formato='Grupo'/'GROUP'. Filas restantes: 202
+   
    ℹ️ Procesando 15006 Transacciones (ignorando primera y última)
+   
    ⏱️ Procesamiento TXT: 70912.98 ms
+   
    ⏱️ Tiempo total extract_positional_data: 71009.13 ms
+   
    ⏱️ Escritura CSV: 748.71 ms
 
 ⏱️ Tiempo total script: 72590.67 ms
 
-Esto se realizó ya que se quiso hacer una prueba piloto con la librería polars para ver si daba mejores resultados en cuanto al tiempo de procesamiento, hubo una mejora significativa *al rededor de 7x*, en el tiempo total de procesamiento
+Esto se realizó ya que se quiso hacer una prueba piloto con la librería polars para ver si daba mejores resultados en cuanto al tiempo de procesamiento, hubo una __mejora significativa alrededor de 7x__, en el tiempo total de procesamiento
 
-=== VALIDACIONES COMPLETADAS POLARS ===
+__=== VALIDACIONES COMPLETADAS POLARS ===__
 
 --- Procesando datos ---
    ⏱️ Lectura Excel: 101.41 ms
+   
    ℹ️ Filas filtradas por Formato='Grupo'/'GROUP'. Filas restantes: 202
+   
    ⏱️ Filtrado y ordenamiento: 407.96 ms
+   
    ℹ️ Procesando 15006 Transacciones (ignorando primera y última)
+   
    ⏱️ Lectura TXT: 213.43 ms
+   
    ⏱️ Procesamiento líneas TXT: 8093.97 ms
+   
    ⏱️ Creación DataFrame: 302.23 ms
+   
    ⏱️ Tiempo total extract_positional_data: 9119.19 ms
+   
    ⏱️ Escritura CSV: 158.30 ms
+   
 
 ⏱️ Tiempo total script: 10433.65 ms
 
@@ -70,45 +84,58 @@ Long.	            Longitud total
 
 Se realizó un análisis revisando inconsistencias, duplicados y solapamientos y se encontró:
 
-1. DUPLICADOS  (MISMA POSICIÓN)
+*__1.__* *DUPLICADOS  (MISMA POSICIÓN)*
+
 
 32  9(06) ND 138–143
+
 33  9(06) ND 138–143
 
 
-2. REDEFINICIONES
+*__2.__* *REDEFINICIONES*
 
 Caso crítico: Posición 204–223 (20 bytes)
 
 Aparece redefinida al menos 9 veces
 
 Bloques repetidos
+
 49  X(20)        204–223
+
 50  Grupo        204–223
+
 53  GROUP        204–223
+
 57  Grupo        204–223
+
 59  GROUP        204–223
+
 65  GROUP        204–223
+
 71  GROUP        204–223
+
 75  GROUP        204–223
+
 80  Grupo        204–223
 
-3. CAMPOS QUE SE PISAN (SOLAPAMIENTO)
+*__3.__* *CAMPOS QUE SE PISAN (SOLAPAMIENTO)*
 
 144 X(04) AN 424–427
+
 145 S9(03) SIGN LEADING SEPARATE 424–427
 
-4. POSICIONES NUMÉRICAS DECLARADAS COMO AN
+*__4.__* *POSICIONES NUMÉRICAS DECLARADAS COMO AN*
 
 136 9(22) AN 342–362
 
 
-5. LONGITUDES QUE NO CUADRAN
+*__5.__* *LONGITUDES QUE NO CUADRAN*
+
 79 X(04) AN 220–223 15
 
 Sobre estos hallazgos se solo se realizó la eliminación de todos los campos que tenian el formato GROUP o GRUPO, ya que se eliminaba con esto mucha información repetida(al reededor de 49 campos).
 
-Sobre los otros no se tomaron mas decisiones ya que no se encontraba una explicación clara de que significaba cada campo, ni de la información que estaba siendo almacenada.
+Sobre las otras inconsistencias __no se tomaron mas decisiones, ni acciones__ ya que no se encontraba una explicación clara de que significaba cada campo, ni de la información que estaba siendo almacenada.
 
 ## 🗂️ Project Organization
 
